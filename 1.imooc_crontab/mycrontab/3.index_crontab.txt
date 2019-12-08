@@ -1,0 +1,132 @@
+====================================功能=============================================
+1个master 多个worker
+1个worker:1个监听协程+1个调度协程+多个执行协程+1个日志协程
+
+相同的任务不能并发:多个执行协程防止并发使用etcd分布式锁
+不同的任务可以并发:
+
+====================================功能=============================================
+master:
+1.框架/配置文件/命令行参数/线程配置
+2.api提供给web后台用于管理job
+3.web:bootstrap+jquery
+
+worker:
+1.从etcd获取任务
+2.调度模块,基于cron表达式执行多个job
+3.执行模块,并发多个job
+4.job分布式锁, 同一个任务不能并发
+5.执行日志保存
+
+common:通用
+====================================启动=============================================
+1.启动mongdb
+
+2.启动etcd
+./etcd
+
+3.启动master
+idea:
+name:master
+type:file
+file:/root/www/go_www/src/go_study2/2.imooc_crontab/mycrontab/master/main/master.go
+output directory:/root/www/go_www/src/go_study2/2.imooc_crontab/mycrontab/master/main/
+working directory:/root/www/go_www/src/go_study2/2.imooc_crontab/mycrontab/master/main/
+
+4.启动worker
+idea:
+name:worker
+type:file
+file:/root/www/go_www/src/go_study2/2.imooc_crontab/mycrontab/worker/main/worker.go
+output directory:/root/www/go_www/src/go_study2/2.imooc_crontab/mycrontab/worker/main/
+working directory:/root/www/go_www/src/go_study2/2.imooc_crontab/mycrontab/worker/main/
+======================================调试===========================================
+postman 增加任务
+第一次请求:5秒执行一次的任务
+post:192.168.1.177:8070/job/save
+Content-Type:application/x-www-form-urlencoded
+key   value
+job   {"name":"job1", "command":"echo hello", "cronExpr":"*/5 * * * * * *"}
+
+第二次请求:5秒执行一次的任务
+post:192.168.1.177:8070/job/save
+Content-Type:application/x-www-form-urlencoded
+key   value
+job   {"name":"job1", "command":"echo hello2", "cronExpr":"*/5 * * * * * *"}
+
+etcd查看
+// 任务保存目录
+ETCDCTL_API=3 ./etcdctl get "/cron/jobs" --prefix
+// 任务强杀目录
+ETCDCTL_API=3 ./etcdctl watch "/cron/killer" --prefix
+// 任务锁目录
+ETCDCTL_API=3 ./etcdctl watch "/cron/lock" --prefix
+// 服务注册目录
+ETCDCTL_API=3 ./etcdctl watch "/cron/workers" --prefix
+=================================================================================
+postman 删除任务
+post:192.168.1.177:8070/job/delete
+Content-Type:application/x-www-form-urlencoded
+key    value
+name   job1
+=================================================================================
+postman 查看所有任务
+get:192.168.1.177:8070/job/list
+=================================================================================
+postman 杀死任务
+post:192.168.1.177:8070/job/kill
+Content-Type:application/x-www-form-urlencoded
+key    value
+name   job1
+=================================================================================
+postman 后台查看任务日志
+get:192.168.1.177:8070/job/log?name=job10&limit=5
+=================================================================================
+postman 后台查看健康节点
+get:192.168.1.177:8070/worker/list
+=================================================================================
+=================================================================================
+=================================================================================
+=================================================================================
+后台:
+http://192.168.1.177:8070/
+
+后台添加5秒执行1次的任务
+job5miao
+echo 123 > /tmp/1.txt
+*/5 * * * * * *
+
+后台添加2秒执行1次的任务
+job2miao
+sleep 1
+*/2 * * * * * *
+=================================================================================
+mongo查看日志
+mongo
+use cron
+db.log.find()
+
+
+=================================================================================
+systemctl部署+nginx配置
+https://coding.imooc.com/lesson/281.html#mid=19244
+=================================================================================
+todo:
+1.任务超时控制:
+web增加任务超时配置
+worker去支持任务超时取消:context有个叫什么timeout的应该可以
+worker任务超时e在日志中要记录
+
+2.master选主
+用etcd分布式锁 /cron/master
+那个leader
+
+3.任务失败告警
+worker任务失败后向etcd的/cron/warn/{jobname}写入
+leader master 监听/cron/warn/{jobname} 然后报警
+可能这个存etcd不是很好 可能存消息队列更好
+
+
+=================================================================================
+=================================================================================
+

@@ -1,0 +1,6 @@
+sudo apt-get install mongodb
+不想开机启动
+systemctl disable mongodb
+ps -ef|grep mongodb
+
+mongo

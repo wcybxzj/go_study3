@@ -1,0 +1,325 @@
+Go 语⾔言基础
+---------------
+基本程序结构
+常⽤用集合
+函数式编程
+⾯面向对象编程
+错误处理理
+模块化及依赖管理理
+
+进阶与实战
+---------------
+并发编程模式
+常⻅见并发任务
+深⼊入测试
+反射和 Unsafe
+常⻅见架构模式的实现
+性能调优
+⾼高可⽤用性服务设计
+
+=========================================================================================================
+lesson3 数据类型
+1. Go 语⾔言不不允许隐式类型转换
+2. 别名和原有类型也不不能进⾏行行隐式类型转换
+3.数字最大值
+math.MaxInt64
+math.MaxFloat64
+math.MaxUint32
+
+4.基本数据类型
+bool
+string
+int(64位系统就是64bit)  int8  int16  int32  int64
+uint(64位系统就是64bit) uint8 uint16 uint32 uint64 uintptr
+byte // alias for uint8
+rune // alias for int32,represents a Unicode code point
+float32 float64
+complex64 complex128
+
+5.
+golang不支持隐式类型转换
+golang不支持指针运算
+golang 声明的string是空字符串不是nil
+
+6.指针类型:
+与其他主要编程语⾔言的差异
+6.1. 不⽀持指针运算
+6.2. string 是值类型，其默认的初始化值为空字符串串，⽽而不不是 nil
+=========================================================================================================
+lesson4 运算符
+1.比较数组
+⽤ == ⽐较组
+相同维数且含有相同个数元素的数组才可以比较
+每个元素都相同的才相等
+
+2. &^ 按位置零
+与其他主要编程语⾔言的差异
+左边  右边 结果
+1  &^ 0   1
+0  &^ 0   0
+1  &^ 1   0
+0  &^ 1   0
+右边只要是0, 左边的的哪一位保持不变
+右边只要是1, 左边的的哪一位被清零
+=========================================================================================================
+lesson5 条件和循环
+switch条件 与其他主要编程语⾔言的差异
+1.条件表达式不限制为常量或者整数;
+2.单个 case 中，可以出现多个结果选项, 使⽤用逗号分隔;
+3.与 C 语言等规则相反，Go 语⾔不需要⽤break来明确退出一个 case;
+4.可以不设定 switch 之后的条件表达式，在此种情况下，整个 switch 结构与多个 if...else... 的逻辑作⽤用等同
+=========================================================================================================
+lesson6 数组和切⽚
+
+1.数组的声明
+var a [3]int //声明并初始化为默认零值
+a[0] = 1
+b := [3]int{1, 2, 3} //声明同时初始化
+c := [2][2]int{{1, 2}, {3, 4}} //多维数组初始化
+
+2.数组截取
+a[开始索引(包含), 结束索引(不包含)]
+a := [...]int{1, 2, 3, 4, 5}
+a[1:2]  //2
+a[1:3]  //2,3
+a[1:len(a)] //2,3,4,5
+a[1:] //2,3,4,5
+a[:3] //1,2,3
+
+3.切片的内部结构
+struct Slice{
+    *ptr --> 实际的数组
+    len
+    cap
+}
+
+4.切⽚片声明
+var s0 []int
+s0 = append(s0, 1)
+s := []int{}
+s1 := []int{1, 2, 3}
+s2 := make([]int, 2, 4)
+/*
+[]type, len, cap
+其中len个元素会被初始化为默认零值，未初始化元素不可以访问
+*/
+
+5.数组 vs. 切⽚片
+1.容量量是否可伸缩
+2.数组可以比较, 分片只能和nil比较
+
+=========================================================================================================
+lesson7:Map
+1.Map 元素的访问 与其他主要编程语⾔言的差异
+在访问的 Key 不存在时，仍会返回零值，不能通过返回 nil 来判断元素是否存在
+if v, ok := m["four"]; ok {
+  t.Log("four", v)
+} else {
+  t.Log("Not existing")
+}
+
+2.map在函数做参数默认是传递的地址
+
+3.map和slice只能和nil进行比较
+=========================================================================================================
+lesson8:Map扩展
+=========================================================================================================
+lesson9:String
+1.字符串串
+与其他主要编程语⾔言的差异
+1.1. string 是数据类型，不不是引⽤用或指针类型
+1.2. string 是只读的 byte slice，len 函数可以它所包含的 byte 数
+1.3. string 的 byte 数组可以存放任何数据
+
+2.Unicode UTF8
+2.1. Unicode 是⼀一种字符集(code point)
+2.2. UTF8 是 unicode 的存储实现 (转换为字节序列列的规则)
+
+3.编码与存储
+字符 			“中”
+Unicode			0x4E2D
+UTF-8			0xE4B8AD
+string/[]byte	[0xE4,0xB8,0xAD]
+=========================================================================================================
+lesson10:函数
+
+1.函数是⼀一等公⺠民
+与其他主要编程语⾔言的差异
+1.1. 可以有多个返回值
+1.2. 所有参数都是值传递:slice，map，channel 会有传引⽤用的错觉
+1.3. 函数可以作为变量量的值
+1.4. 函数可以作为参数和返回值
+
+=========================================================================================================
+lesson11:
+封装数据和⾏为
+定义交互协议
+⾃自定义类型
+=========================================================================================================
+lesson12:扩展与复⽤
+1.复合(组合)
+与其他主要编程语⾔言的差异
+Go 不⽀持继承，但可以通过复合的方式来复⽤
+
+2.匿名类型嵌⼊
+与其他主要编程语⾔的差异
+它不是继承，如果我们把“内部 struct ”看作父类，把“外部 struct” 看作子类，
+会发现如下问题:
+2.1.不⽀持⼦类替换
+2.2.子类并不是真正继承了父类的方法
+
+父类的定义的⽅法⽆法访问⼦类的数据和⽅方法
+=========================================================================================================
+lesson13:多态与空接⼝口
+=========================================================================================================
+lesson14:panic和recover和exit
+exit:不会执行defer的 不打印堆栈信息
+panic:执行defer 并且打印堆栈信息
+=========================================================================================================
+lesson38:反射
+=========================================================================================================
+lesson39:不安全编程
+
+可以实现强制类型转换
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+ch46:
+1.准备:
+brew install graphviz
+
+git clone https://github.com/brendangregg/FlameGraph.git
+cd FlameGraph
+
+cd /Users/ybx/www/go_www2/zuji/go_study2/10.go_learning
+go get github.com/uber/go-torch
+
+go tool pprof [binary] [binary.prof]
+https://studygolang.com/static/pkgdoc/pkg/runtime_pprof.htm
+
+Go ⽀支持的多种 Profile
+go help testflag
+https://golang.org/src/runtime/pprof/pprof.go
+
+
+2.产生性能数据源方式有2种
+方式1:二进制执行
+方式2:net/http/pprof
+
+3.分析性能方式有2种
+方式1:go tool
+方式2:go-torch
+
+4.实战1(prof.go) 二进制性能监控
+4.1
+go build prof.go
+
+4.2
+./prof
+
+4.3
+go tool pprof cpu.prof
+(pprof) top
+Showing nodes accounting for 1.39s, 100% of 1.39s total
+Showing top 10 nodes out of 17
+      flat  flat%   sum%        cum   cum%
+     1.32s 94.96% 94.96%      1.33s 95.68%  main.fillMatrix (耗时最多)
+     0.01s  0.72%   100%      0.01s  0.72%  runtime.usleep
+         0     0%   100%      1.37s 98.56%  main.main
+(pprof) list main.fillMatrix
+Total: 1.39s
+ROUTINE ======================== main.fillMatrix in prof.go
+     1.32s      1.33s (flat, cum) 95.68% of Total
+         .          .     21:		for j := 0; j < col; j++ {
+     1.32s      1.33s     22:			m[i][j] = s.Intn(100000) (耗时最多)
+         .          .     27:func calculate(m *[row][col]int) {
+(pprof) svg
+(pprof) exit
+
+用浏览器看svg图片
+
+go-torch cpu.prof
+
+4.4
+go tool pprof mem.prof
+go-torch mem.prof
+
+
+5.实战2(fb_server.go) 二进制性能监控
+cd /Users/ybx/www/go_www2/zuji/go_study2/10.go_learning/ch46.tools/http
+
+go run fb_server.go
+
+go tool pprof http://127.0.0.1:8081/debug/pprof/profile?seconds=10
+需要同时放多 模拟请求
+http://127.0.0.1:8081/fb
+
+go-torch -seconds 10 http://127.0.0.1:8081/debug/pprof/profile
+需要同时放多 模拟请求
+http://127.0.0.1:8081/fb
+=========================================================================================================
+ch47:
+cd ch47
+benchmark并且输出profile
+go test -bench=. -cpuprofile=cpu.profile
+
+go tool pprof cpu.profile
+
+
+go tool pprof mem.profile
+(pporf)top
+flat    flat%   sum%        cum      cum%
+1.59GB  81.25%  81.25%      1.96GB   100%  processRequestOld (最消耗内存)
+
+(pporf)list processRequestOld
+.................. .................. ..................
+1.52GB     1.52GB     52:                   ret += strconv.Itoa(e) + "," (最消耗内存)
+.................. .................. ..................
+
+第一次优化:
+optimization.go
+用easyjson替换掉原来的 Marshal和UnMarshal
+go test -bench=. -memprofile=mem.profile
+
+第二次优化:
+optimization.go
+ret += strconv.Itoa(e) + ","
+字符串相加慢，因为字符串是不能扩容的，每次都要重新分配空间，分配内存多了还要GC
+优化成用buf来进行字符拼接
+=========================================================================================================
+ch49:gc调试
+
+1.GC跟踪
+go test -bench=.
+pkg: 10.go_learing/ch49.gc_friendly/gc_friendly/passing_ref
+BenchmarkPassingArrayWithValue-12    	     100	            12490462 ns/op
+BenchmarkPassingArrayWithRef-12      	2000000000	                0.50 ns/op
+PASS
+ok  	10.go_learing/ch49.gc_friendly/gc_friendly/passing_ref	2.455s
+
+GODEBUG=gctrace=1 go test -bench=BenchmarkPassingArrayWithValue
+GODEBUG=gctrace=1 go test -bench=BenchmarkPassingArrayWithRef
+
+
+2.trace
+go test -bench=BenchmarkPassingArrayWithValue -trace=trace_val
+go test -bench=BenchmarkPassingArrayWithRef -trace=trace_ref
+go tool  trace trace_ref
+go tool  trace trace_val
+
+go run 3.trace.go
+go tool  trace trace.out
+
+3.如果能与预先知道slice要用的大小，设置cap到那个大小能提高很多性能
+auto_growing.go
+
+=========================================================================================================
+ch50:
+
+BenchmarkSprintf-12          	  100000	     18254 ns/op
+BenchmarkStringBuilder-12    	 2000000	       984 ns/op
+BenchmarkBytesBuf-12         	 1000000	      1516 ns/op
+BenchmarkStringAdd-12        	  200000	      5989 ns/op
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================

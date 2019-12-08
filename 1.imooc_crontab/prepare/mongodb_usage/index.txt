@@ -1,0 +1,53 @@
+mongdb
+1.存储的是json->也可以叫bson 因为里面的数据是二进制的
+
+2.schema-free:没有表结构
+
+3.mysql    vs       mongodb
+database:           database
+table:              collection
+row:                document(bson)
+column:             field
+index:              index
+table joins:        $lookup
+PK:                 _id
+group by:           aggregation pipeline
+where或者having:     $match
+select:             $project
+orderby:            $sort
+limit:              $limit
+sum:                $sum
+count:              $sum
+
+4.选择database
+show databases
+use my_db
+数据库无需创建,只是一个命名空间
+
+5.创建collection
+show collections
+db.createCollection("my_collection")
+数据表schema-free,无需定义字段
+
+6.插入document
+db.my_collection.insertOne({uid:10000,name:"xiaoming",likes:["football", "game"]})
+文档ID自动生成无需手动指定
+
+7.查询document
+喜欢足球and name 是xiaoming或者libai,uid正序排序
+db.my_collection.find({likes:'football',name:{$in:['xiaoming', 'libai']}}).sort({uid:1})
+
+8.更新document
+把喜欢足球的人名字改成libai
+db.my_collection.updateMany({likes:'football'},{$set:{name:'libai'}})
+第一个是过滤条件
+第二个是更新的操作
+
+9.删除document
+db.my_collection.deleteMany({name:'xxiaoming'})
+
+10.创建index
+mongodb的索引是有顺序的,
+uid是正序 name是倒序创建索引
+db.my_collection.createIndex({uid:1, name:-1})
+db.my_collection.
