@@ -39,8 +39,8 @@ func (c *DemoCollector) Start(agtCtx context.Context) error {
 
 		default:
 			time.Sleep(time.Millisecond * 50)
-			t := time.Now().Format("2006-01-02 15:04:05")
-			c.evtReceiver.OnEvent(agent.Event{c.name, c.name+t})
+			//t := time.Now().Format("2006-01-02 15:04:05")
+			c.evtReceiver.OnEvent(&agent.Event{c.name, c.content})
 		}
 	}
 }
@@ -64,8 +64,9 @@ func (c *DemoCollector) Destroy() error {
 //go run -race agent_test1.go
 func main() {
 	var err error
-
-	agt := agent.NewAgent(100)
+	agentChanSize := 300
+	batchMax := 100
+	agt := agent.NewAgent(agentChanSize, batchMax)
 	c1 := NewCollect("c1", "1")
 	c2 := NewCollect("c2", "2")
 	agt.RegisterController("c1", c1)
@@ -81,7 +82,7 @@ func main() {
 	}
 
 	//因为前面已经启动过了会报错
-	time.Sleep(time.Second *3)
+	time.Sleep(time.Second *20)
 	agt.Stop()
 	agt.Destroy()
 }
