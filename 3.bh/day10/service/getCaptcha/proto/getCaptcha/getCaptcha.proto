@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package go.micro.srv.getCaptcha;
+
+service GetCaptcha {
+	rpc Call(Request) returns (Response) {}
+}
+
+message Request {
+	// 传入参数为web 得到的 uuid
+	string uuid = 1;
+}
+
+// 返回给 web端的数据 --- 验证码对应图片
+message Response {
+	bytes img = 1;  // 结合 json 序列化 / 反序列化
+}

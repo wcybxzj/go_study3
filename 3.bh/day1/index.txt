@@ -1,0 +1,5 @@
+go rpc有3种方式
+1. net/rpc:序列化方式gob 这种特殊的序列化反序列化方式 其他语言不支持
+2.jsonrpc:慢
+3.protobuffer+grpc
+protoc --go_out=plugins=grpc:./ *.proto

@@ -1,0 +1,23 @@
+1.安装
+unzip consul_1.5.2_linux_amd64.zip
+mv consul /usr/bin/
+
+mkdir /etc/consul.d/
+cp web.json /etc/consul.d/
+
+================================================================================
+2.测试1:启动1个consul server
+consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul \
+-node=n1 -bind=192.168.204.132 -ui -rejoin -config-dir=/etc/consul.d/ \
+-client 0.0.0.0
+
+//web界面
+192.168.204.132:8500
+
+//优雅退出
+consul leave
+
+================================================================================
+
+3.测试2 dev模式运行
+consul agent -dev

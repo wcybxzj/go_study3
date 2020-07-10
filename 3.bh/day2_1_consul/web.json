@@ -1,0 +1,7 @@
+{
+  "service":{
+    "name":"bj50",
+    "tags":["itcast", "itheima"],
+    "port":8002
+  }
+}

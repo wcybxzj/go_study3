@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pb;
+
+// 不能在同一个 包下,创建同名的 消息体.
+message Teacher {
+    int32 age = 1;
+    string name = 2;
+}
+
+// rpc 服务
+service SayName {
+    rpc SayHello(Teacher) returns (Teacher);
+}
